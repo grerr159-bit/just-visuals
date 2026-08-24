@@ -27,8 +27,11 @@ public class DraggableManager {
 
     public static void init() {
         load();
-        dev.client.api.nullcry.uiClient.draggables.HudSettingsStorage.load();
         registerShutdownHook();
+    }
+
+    public static void loadHudSettings() {
+        dev.client.api.nullcry.uiClient.draggables.HudSettingsStorage.load();
     }
 
     public static void save() {

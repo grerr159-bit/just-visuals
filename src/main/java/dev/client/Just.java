@@ -154,6 +154,7 @@ public class Just implements ModInitializer, ClientApi {
         moduleManager.init();
         componentManager = new ComponentManager();
         componentManager.initComponents();
+        DraggableManager.loadHudSettings();
     }
 
     void initScreens() {

@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 public class Updater implements ClientApi {
     public static final Updater INSTANCE = new Updater();
@@ -30,8 +29,35 @@ public class Updater implements ClientApi {
     private boolean updateReady = false;
 
     public void init() {
+        applyPendingUpdate();
         loadLocalVersion();
         checkForUpdatesAndAutoUpdate();
+    }
+
+    private Path modsDir() {
+        return mc.runDirectory.toPath().resolve("mods");
+    }
+
+    private Path currentJar() {
+        return modsDir().resolve(JAR_NAME);
+    }
+
+    private Path newJar() {
+        return modsDir().resolve(JAR_NAME + ".new");
+    }
+
+    private void applyPendingUpdate() {
+        try {
+            Path pending = newJar();
+            if (Files.exists(pending)) {
+                Path current = currentJar();
+                if (Files.exists(current)) {
+                    Files.delete(current);
+                }
+                Files.move(pending, current);
+            }
+        } catch (Exception e) {
+        }
     }
 
     private void loadLocalVersion() {
@@ -74,7 +100,7 @@ public class Updater implements ClientApi {
                     updateAvailable = !localVersion.equals(remoteVersion);
 
                     if (updateAvailable && downloadUrl != null) {
-                        autoDownloadAndRestart();
+                        autoDownload();
                     }
                 }
                 conn.disconnect();
@@ -83,7 +109,7 @@ public class Updater implements ClientApi {
         }, "Updater-Check").start();
     }
 
-    private void autoDownloadAndRestart() {
+    private void autoDownload() {
         downloading = true;
         downloadProgress = 0f;
 
@@ -97,7 +123,9 @@ public class Updater implements ClientApi {
 
                 if (conn.getResponseCode() == 200) {
                     int fileSize = conn.getContentLength();
-                    Path tempFile = mc.runDirectory.toPath().resolve("config").resolve("just-update-temp.jar");
+                    Path tempFile = newJar();
+
+                    Files.createDirectories(modsDir());
 
                     try (InputStream in = conn.getInputStream();
                          OutputStream out = Files.newOutputStream(tempFile)) {
@@ -113,22 +141,11 @@ public class Updater implements ClientApi {
                         }
                     }
 
-                    Path modsDir = mc.runDirectory.toPath().resolve("mods");
-                    Path currentJar = modsDir.resolve(JAR_NAME);
-                    Path backupJar = mc.runDirectory.toPath().resolve("config").resolve("just-backup.jar");
-
-                    if (Files.exists(currentJar)) {
-                        Files.copy(currentJar, backupJar, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                    Files.move(tempFile, currentJar, StandardCopyOption.REPLACE_EXISTING);
-
                     downloadProgress = 1.0f;
                     downloading = false;
                     updateAvailable = false;
                     updateReady = true;
                     saveLocalVersion(remoteVersion);
-
-                    restartGame();
                 } else {
                     downloading = false;
                 }
@@ -137,53 +154,6 @@ public class Updater implements ClientApi {
                 downloading = false;
             }
         }, "Updater-AutoDownload").start();
-    }
-
-    private void restartGame() {
-        try {
-            Path mcDir = mc.runDirectory.toPath();
-            Path scriptsDir = mcDir.resolve("config").resolve("just-updater");
-            Files.createDirectories(scriptsDir);
-
-            String javaBin = ProcessHandle.current().info().command().orElse("java");
-
-            Path batFile;
-            Path psFile;
-
-            String os = System.getProperty("os.name").toLowerCase();
-            if (os.contains("win")) {
-                batFile = scriptsDir.resolve("restart.bat");
-                String batContent = "@echo off\n"
-                        + "timeout /t 3 /nobreak >nul\n"
-                        + "del \"" + currentJarPath() + "\" 2>nul\n"
-                        + "move \"" + mcDir.resolve("config").resolve("just-backup.jar") + "\" \"" + currentJarPath() + "\" 2>nul\n"
-                        + "start \"\" \"%APPDATA%\\.minecraft\\mods\\" + JAR_NAME + "\"\n"
-                        + "del \"%~f0\"\n";
-                Files.writeString(batFile, batContent);
-
-                new ProcessBuilder("cmd", "/c", "start", "", batFile.toAbsolutePath().toString())
-                        .directory(mcDir.toFile())
-                        .start();
-            } else {
-                psFile = scriptsDir.resolve("restart.sh");
-                String shContent = "#!/bin/bash\n"
-                        + "sleep 3\n"
-                        + "rm -f \"" + currentJarPath() + "\"\n"
-                        + "mv \"" + mcDir.resolve("config").resolve("just-backup.jar") + "\" \"" + currentJarPath() + "\" 2>/dev/null\n"
-                        + "rm -f \"" + psFile.toAbsolutePath() + "\"\n";
-                Files.writeString(psFile, shContent);
-                Runtime.getRuntime().exec(new String[]{"bash", psFile.toAbsolutePath().toString()});
-            }
-
-            Thread.sleep(500);
-            MinecraftClient.getInstance().scheduleStop();
-        } catch (Exception e) {
-            MinecraftClient.getInstance().scheduleStop();
-        }
-    }
-
-    private String currentJarPath() {
-        return mc.runDirectory.toPath().resolve("mods").resolve(JAR_NAME).toAbsolutePath().toString();
     }
 
     public void checkForUpdates() {
@@ -226,7 +196,9 @@ public class Updater implements ClientApi {
 
                 if (conn.getResponseCode() == 200) {
                     int fileSize = conn.getContentLength();
-                    Path tempFile = mc.runDirectory.toPath().resolve("config").resolve("just-update-temp.jar");
+                    Path tempFile = newJar();
+
+                    Files.createDirectories(modsDir());
 
                     try (InputStream in = conn.getInputStream();
                          OutputStream out = Files.newOutputStream(tempFile)) {
@@ -241,14 +213,6 @@ public class Updater implements ClientApi {
                             }
                         }
                     }
-
-                    Path currentJar = mc.runDirectory.toPath().resolve("mods").resolve(JAR_NAME);
-                    Path backupJar = mc.runDirectory.toPath().resolve("config").resolve("just-backup.jar");
-
-                    if (Files.exists(currentJar)) {
-                        Files.copy(currentJar, backupJar, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                    Files.move(tempFile, currentJar, StandardCopyOption.REPLACE_EXISTING);
 
                     downloadProgress = 1.0f;
                     downloading = false;
