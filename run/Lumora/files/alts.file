@@ -1,0 +1,14 @@
+{
+  "accounts": [
+    {
+      "name": "FajinolOrafefoY",
+      "date": "08.03.2026",
+      "favorite": false,
+      "favoriteOrder": 0,
+      "createdOrder": 1
+    }
+  ],
+  "selected": "FajinolOrafefoY",
+  "favoriteCounter": 0,
+  "creationCounter": 1
+}

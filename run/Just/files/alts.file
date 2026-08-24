@@ -1,0 +1,35 @@
+{
+  "accounts": [
+    {
+      "name": "ruek4ek",
+      "date": "21.08.2026",
+      "favorite": false,
+      "favoriteOrder": 0,
+      "createdOrder": 1
+    },
+    {
+      "name": "Bevvr",
+      "date": "21.08.2026",
+      "favorite": false,
+      "favoriteOrder": 0,
+      "createdOrder": 2
+    },
+    {
+      "name": "alerfggr",
+      "date": "21.08.2026",
+      "favorite": false,
+      "favoriteOrder": 0,
+      "createdOrder": 3
+    },
+    {
+      "name": "HerOOOOOn123",
+      "date": "23.08.2026",
+      "favorite": false,
+      "favoriteOrder": 0,
+      "createdOrder": 4
+    }
+  ],
+  "selected": "Bevvr",
+  "favoriteCounter": 0,
+  "creationCounter": 4
+}

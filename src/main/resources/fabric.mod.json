@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "just",
+  "version": "${version}",
+
+  "name": "Just",
+  "description": "Мод для Minecraft с визуальными эффектами, HUD элементами и полезными функциями",
+  "authors": [
+    "Just Team"
+  ],
+  "contact": {
+    "homepage": "https://just.visuals",
+    "sources": "https://github.com/just/visuals"
+  },
+
+  "license": "All-Rights-Reserved",
+  "icon": "assets/just/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.client.Just"
+    ]
+  },
+
+  "mixins": [
+    "Just_mixins.json"
+  ],
+
+  "accessWidener": "Just.accesswidener",
+
+  "depends": {
+    "minecraft": "*"
+  },
+  
+  "suggests": {
+    "another-mod": "*"
+  }
+}

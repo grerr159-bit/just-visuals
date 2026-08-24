@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Watermark",
+    "x": 430.1659,
+    "y": 24.0
+  },
+  {
+    "name": "PlayerInfo",
+    "x": 960.0,
+    "y": 529.0
+  },
+  {
+    "name": "Keybinds",
+    "x": 680.0,
+    "y": 163.0
+  },
+  {
+    "name": "Potions",
+    "x": 10.086639,
+    "y": 99.0
+  },
+  {
+    "name": "Cooldowns",
+    "x": 739.0,
+    "y": 81.0
+  },
+  {
+    "name": "Target Hud",
+    "x": 425.0,
+    "y": 369.80002
+  },
+  {
+    "name": "ArmorHud",
+    "x": 6.9208984,
+    "y": 9.200012
+  },
+  {
+    "name": "InventoryHud",
+    "x": 735.0,
+    "y": 275.06003
+  },
+  {
+    "name": "Party List",
+    "x": 4.0,
+    "y": 198.0
+  },
+  {
+    "name": "Scoreboard",
+    "x": 840.0,
+    "y": 200.0
+  },
+  {
+    "name": "Notifications",
+    "x": 400.0,
+    "y": 322.65002
+  },
+  {
+    "name": "ServerItems",
+    "x": 920.0,
+    "y": 4.0
+  },
+  {
+    "name": "Staff List",
+    "x": 171.0,
+    "y": 75.3
+  }
+]
