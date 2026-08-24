@@ -5,3 +5,12 @@ build/
 local.properties
 out/
 bin/
+run/
+*.log
+.settings/
+*.classpath
+*.project
+.caches/
+gradle.properties
+gradlew
+gradlew.bat
