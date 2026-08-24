@@ -6,6 +6,7 @@ import dev.client.api.nullcry.modules.Module;
 import dev.client.api.nullcry.modules.ModuleCategory;
 import dev.client.api.nullcry.modules.settings.ModeElement;
 import dev.client.api.nullcry.modules.settings.Slider;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 
@@ -14,6 +15,7 @@ public class FullBright extends Module {
 
     public FullBright() {
         super("Fullbright", ModuleCategory.Visuals, "Увеличивает яркость");
+        INSTANCE = this;
     }
 
     public ModeElement mode = new ModeElement("Режим", () -> true)
@@ -25,22 +27,28 @@ public class FullBright extends Module {
 
     @Subscribe
     public void onUpdate(UpdateEvent event) {
-        if (mode.isSelected("Эффект")) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+
+        if (mode.isSelected("Гамма")) {
+            double target = Math.min(gamma.getValue().doubleValue(), 1.0);
+            mc.options.getGamma().setValue(target);
+        } else {
             if (mc.player.hasStatusEffect(StatusEffects.NIGHT_VISION)) {
                 return;
             }
             mc.player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 1337, 1, false, false));
-        } else {
-            if (mc.player.hasStatusEffect(StatusEffects.NIGHT_VISION)) {
-                mc.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
-            }
         }
     }
 
     @Override
     public void onDisabled() {
-        if (mc.player.hasStatusEffect(StatusEffects.NIGHT_VISION)) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player != null && mc.player.hasStatusEffect(StatusEffects.NIGHT_VISION)) {
             mc.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
+        }
+        if (mc.options != null) {
+            mc.options.getGamma().setValue(1.0);
         }
         super.onDisabled();
     }

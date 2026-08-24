@@ -559,7 +559,7 @@ public class TargetHud implements IHelper, SettingProvider, PanelAlphaProvider {
                     .radius(new QuadRadiusState(Math.max(0f, radius - innerPad)))
                     .build()
                     .render(matrix, x + innerPad, y + innerPad);
-        } else {
+        } else if (!glassEnabled) {
             HelperElements.rectWatermarkStyle(event.getContext(), x, y, panelW, panelH, show);
         }
     }

@@ -27,6 +27,7 @@ public class DraggableManager {
 
     public static void init() {
         load();
+        dev.client.api.nullcry.uiClient.draggables.HudSettingsStorage.load();
         registerShutdownHook();
     }
 
@@ -44,6 +45,8 @@ public class DraggableManager {
             ex.printStackTrace();
             Console.logManager("DragManager -> Ошибка при сохранении данных в файл: " + file.getAbsolutePath());
         }
+
+        dev.client.api.nullcry.uiClient.draggables.HudSettingsStorage.save();
     }
 
     public static void load() {
