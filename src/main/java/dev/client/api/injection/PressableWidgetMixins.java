@@ -1,6 +1,5 @@
 package dev.client.api.injection;
 
-import dev.client.Just;
 import dev.client.api.nullcry.ClientApi;
 import dev.client.api.nullcry.render.ColorUtils;
 import dev.client.api.nullcry.render.core.builders.states.QuadColorState;
@@ -41,8 +40,13 @@ public abstract class PressableWidgetMixins extends ClickableWidget {
         float a = MathHelper.clamp(this.alpha, 0.0f, 1.0f);
         Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
 
-        int bgAlpha = (int)(220 * a);
-        int bgColor = (bgAlpha << 24) | 0x0F0F0F;
+        int bgAlpha = (int)(200 * a);
+        int bgColor;
+        if (hovered && this.active) {
+            bgColor = (bgAlpha << 24) | 0xFFFFFF;
+        } else {
+            bgColor = (bgAlpha << 24) | 0x1A1A1A;
+        }
         ClientApi.rectangle()
                 .size(new SizeState(this.getWidth(), this.getHeight()))
                 .radius(new QuadRadiusState(4f))
@@ -51,7 +55,7 @@ public abstract class PressableWidgetMixins extends ClickableWidget {
                 .render(matrix, this.getX(), this.getY());
 
         if (hovered && this.active) {
-            int borderColor = ColorUtils.setAlpha(-1, (int)(180 * a));
+            int borderColor = ColorUtils.setAlpha(-1, (int)(200 * a));
             ClientApi.outline()
                     .size(new SizeState(this.getWidth(), this.getHeight()))
                     .radius(new QuadRadiusState(4f))
@@ -63,7 +67,11 @@ public abstract class PressableWidgetMixins extends ClickableWidget {
 
         int color;
         int alpha = MathHelper.ceil(a * 255.0F);
-        color = (alpha << 24) | 0xFFFFFF;
+        if (hovered && this.active) {
+            color = (alpha << 24) | 0x1A1A1A;
+        } else {
+            color = (alpha << 24) | 0xFFFFFF;
+        }
 
         Text message = this.getMessage();
         float fontSize = 8f;
