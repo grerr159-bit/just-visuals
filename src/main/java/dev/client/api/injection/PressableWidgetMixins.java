@@ -45,7 +45,7 @@ public abstract class PressableWidgetMixins extends ClickableWidget {
         if (hovered && this.active) {
             bgColor = (bgAlpha << 24);
         } else {
-            bgColor = (bgAlpha << 24) | 0x0F0F0F;
+            bgColor = (bgAlpha << 24) | 0x2A2A2A;
         }
         ClientApi.rectangle()
                 .size(new SizeState(this.getWidth(), this.getHeight()))
@@ -55,7 +55,7 @@ public abstract class PressableWidgetMixins extends ClickableWidget {
                 .render(matrix, this.getX(), this.getY());
 
         if (hovered && this.active) {
-            int borderColor = ColorUtils.setAlpha(-1, (int)(200 * a));
+            int borderColor = ColorUtils.setAlpha(-1, (int)(220 * a));
             ClientApi.outline()
                     .size(new SizeState(this.getWidth(), this.getHeight()))
                     .radius(new QuadRadiusState(4f))
