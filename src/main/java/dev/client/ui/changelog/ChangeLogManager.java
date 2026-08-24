@@ -9,12 +9,13 @@ public class ChangeLogManager {
     public ChangeLogManager() {
         addLog("=== Just Visuals — Changelog ===");
         addLog("");
+        addLog("▸ TargetHud: стекло, цвет, скругление, прозрачность");
         addLog("▸ 7 анимаций меча: Swipe, Spin, Slash, Snap, Wave, Flick");
-        addLog("▸ Discord: Playing with Just Visuals");
+        addLog("▸ Discord: Играет с Just Visuals");
+        addLog("▸ Автообновление через GitHub");
         addLog("▸ MotionBlur — максимальная плавность");
         addLog("▸ Стекло: мягкая тень вокруг HUD");
         addLog("▸ Стекло: размытие 50 + обводка");
-        addLog("▸ Стекло: прозрачность, скругление");
         addLog("▸ RGB пикер цвета фона");
         addLog("▸ Configs раздел в клик гуи");
         addLog("▸ Potions/Cooldowns/Watermark настройки");
@@ -25,7 +26,6 @@ public class ChangeLogManager {
         addLog("▸ Текстура фона главного экрана");
         addLog("▸ Watermark: FPS, Ping, ник");
         addLog("▸ Клик ГУИ увеличен");
-        addLog("▸ Убраны зазоры пикселей");
     }
     
     public void addLog(String text) {

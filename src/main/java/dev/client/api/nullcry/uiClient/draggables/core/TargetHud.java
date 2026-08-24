@@ -9,8 +9,10 @@ import dev.client.api.nullcry.helper.client.PlayerHelper;
 import dev.client.api.nullcry.helper.math.MathUtil;
 import dev.client.api.nullcry.helper.other.DraggableHandler;
 import dev.client.api.nullcry.modules.settings.CheckBox;
+import dev.client.api.nullcry.modules.settings.ColorPicker;
 import dev.client.api.nullcry.modules.settings.ModeElement;
 import dev.client.api.nullcry.modules.settings.Slider;
+import dev.client.api.nullcry.uiClient.draggables.GlassShadow;
 import dev.client.api.nullcry.render.ClientTexture;
 import dev.client.api.nullcry.render.ColorUtils;
 import dev.client.api.nullcry.render.ScissorUtil;
@@ -70,6 +72,24 @@ public class TargetHud implements IHelper, SettingProvider, PanelAlphaProvider {
     public final Slider particleValue = new Slider("Кол-во частиц", particleTargetHud::getEnabled)
             .set(1, 20, 1)
             .defaultValue(10)
+            .register(this);
+
+    public final ColorPicker bgColor = new ColorPicker("Цвет фона", () -> true)
+            .defaultValue(0x00000000)
+            .register(this);
+
+    public final Slider bgAlpha = new Slider("Прозрачность фона", () -> true)
+            .set(0f, 255f, 1f)
+            .applyDefault(180f)
+            .register(this);
+
+    public final Slider borderRadius = new Slider("Скругление углов", () -> true)
+            .set(0f, 20f, 0.5f)
+            .applyDefault(4f)
+            .register(this);
+
+    public final CheckBox glass = new CheckBox("Стекло", () -> true)
+            .defaultValue(false)
             .register(this);
 
     public final CompactAnimation alphaAnimation = new CompactAnimation(Easing.EASE_OUT_CUBIC, 400);
@@ -491,8 +511,57 @@ public class TargetHud implements IHelper, SettingProvider, PanelAlphaProvider {
         float show = MathHelper.clamp(showProgress, 0f, 1f);
         Matrix4f matrix = event.getContext().getMatrices().peek().getPositionMatrix();
 
-        // Используем стиль Watermark - черный полупрозрачный фон
-        HelperElements.rectWatermarkStyle(event.getContext(), x, y, panelW, panelH, show);
+        float radius = borderRadius.getValue();
+        int bgColorInt = bgColor.getColorRGBA();
+        boolean glassEnabled = glass.getEnabled();
+        int bgA = glassEnabled ? 0 : bgAlpha.getValue().intValue();
+
+        if (glassEnabled) {
+            float outlineExpand = 2f;
+            ClientApi.blur()
+                    .blurRadius(50f)
+                    .Smoothness(4f)
+                    .radius(new QuadRadiusState(radius + outlineExpand))
+                    .size(new SizeState(panelW + outlineExpand * 2, panelH + outlineExpand * 2))
+                    .alpha(show * 0.6f)
+                    .build()
+                    .render(matrix, x - outlineExpand, y - outlineExpand);
+
+            ClientApi.blur()
+                    .blurRadius(50f)
+                    .Smoothness(4f)
+                    .radius(new QuadRadiusState(radius))
+                    .size(new SizeState(panelW, panelH))
+                    .alpha(show)
+                    .build()
+                    .render(matrix, x, y);
+
+            GlassShadow.render(matrix, x, y, panelW, panelH, radius, show);
+        }
+
+        if (bgA > 0) {
+            int normalizedAlpha = (int) Math.min(1f, bgA / 255f * 255f * show);
+            int outlineColor = ColorUtils.setAlpha(Interface.INSTANCE.getMainColor(), normalizedAlpha);
+
+            ClientApi.rectangle()
+                    .size(new SizeState(panelW, panelH))
+                    .color(new QuadColorState(outlineColor))
+                    .radius(new QuadRadiusState(radius))
+                    .build()
+                    .render(matrix, x, y);
+
+            float innerPad = 1f;
+            int fillColor = ColorUtils.setAlpha(bgColorInt, (int) (bgA * show));
+
+            ClientApi.rectangle()
+                    .size(new SizeState(panelW - innerPad * 2, panelH - innerPad * 2))
+                    .color(new QuadColorState(fillColor))
+                    .radius(new QuadRadiusState(Math.max(0f, radius - innerPad)))
+                    .build()
+                    .render(matrix, x + innerPad, y + innerPad);
+        } else {
+            HelperElements.rectWatermarkStyle(event.getContext(), x, y, panelW, panelH, show);
+        }
     }
 
     @Override
