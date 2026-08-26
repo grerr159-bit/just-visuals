@@ -1,5 +1,5 @@
 {
-  "version": "1.0.8",
-  "download_url": "https://github.com/grerr159-bit/just-visuals/releases/download/v1.0.8/Just-Visuals-1.21.4.jar",
-  "changelog": "Fix auto-updater for TLauncher, HUD glass persistence, bright ESC buttons"
+  "version": "1.0.9",
+  "download_url": "https://github.com/grerr159-bit/just-visuals/releases/download/v1.0.9/Just-Visuals-1.21.4.jar",
+  "changelog": "CameraSpin orbit module, ESC menu bright buttons"
 }
